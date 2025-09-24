@@ -1,0 +1,294 @@
+// This is your Prisma schema file for the Aura Jewellery Rental Platform
+// Last updated: September 22, 2025
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ----------------------------------------
+// ENUMS
+// ----------------------------------------
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+  OPERATIONS
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum KycStatus {
+  NOT_VERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  EXPIRED
+}
+
+enum ItemStatus {
+  AVAILABLE
+  RESERVED
+  RENTED
+  IN_TRANSIT_OUT
+  IN_TRANSIT_IN
+  IN_MAINTENANCE
+  LOST
+  RETIRED
+}
+
+enum RentalStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  PREPARING_SHIPMENT
+  SHIPPED_TO_CUSTOMER
+  DELIVERED
+  RETURN_INITIATED
+  SHIPPED_TO_AURA
+  RETURNED
+  COMPLETE
+  CANCELLED
+}
+
+// ----------------------------------------
+// CORE MODELS
+// ----------------------------------------
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Seller {
+  id            Int        @id @default(autoincrement())
+  brandName     String
+  contactPerson String
+  email         String     @unique
+  password      String
+  phone         String?
+  address       String?
+  bankDetails   Json?
+  gstin         String?
+  status        UserStatus @default(ACTIVE)
+  kycStatus     KycStatus  @default(NOT_VERIFIED)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  products      Product[]
+  payouts       Payout[]
+}
+
+model User {
+  id           Int                 @id @default(autoincrement())
+  name         String
+  email        String              @unique
+  password     String
+  phone        String?
+  status       UserStatus          @default(ACTIVE)
+  kycStatus    KycStatus           @default(NOT_VERIFIED)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  subscription UserSubscription?
+  rentals      Rental[]
+  addresses    Address[]
+  cart         Cart?
+  wishlist     Wishlist?
+  reviews      Review[]
+  payments     Payment[]
+}
+
+model Address {
+  id          Int     @id @default(autoincrement())
+  addressLine String
+  city        String
+  state       String
+  postalCode  String
+  country     String  @default("India")
+  isDefault   Boolean @default(false)
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+}
+
+model SubscriptionPlan {
+  id                Int                @id @default(autoincrement())
+  name              String             @unique
+  price             Float
+  itemLimit         Int
+  description       String?
+  isActive          Boolean            @default(true)
+  userSubscriptions UserSubscription[]
+}
+
+model UserSubscription {
+  id                   Int                @id @default(autoincrement())
+  status               SubscriptionStatus @default(ACTIVE)
+  startDate            DateTime
+  currentPeriodEndDate DateTime
+  cancelledAt          DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               Int                @unique
+  plan                 SubscriptionPlan   @relation(fields: [planId], references: [id], onDelete: Restrict)
+  planId               Int
+  rentals              Rental[]
+}
+
+model Product {
+  id                   Int           @id @default(autoincrement())
+  name                 String
+  description          String?
+  imageUrls            String[]
+  arModelUrl           String?
+  category             String
+  material             String
+  oneTimeRentalFee     Float
+  insuredDeclaredValue Float
+  isAvailable          Boolean       @default(true)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  seller               Seller        @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+  sellerId             Int
+  items                Item[]
+  cartItems            CartItem[]
+  wishlistItems        WishlistItem[]
+  reviews              Review[]
+  @@index([sellerId])
+}
+
+model Item {
+  id                  Int         @id @default(autoincrement())
+  sku                 String      @unique
+  status              ItemStatus  @default(AVAILABLE)
+  condition           String      @default("EXCELLENT")
+  purchaseDate        DateTime?
+  lastMaintenanceDate DateTime?
+  qcNotes             String?
+  product             Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId           Int
+  rentalItems         RentalItem[]
+  @@index([status])
+}
+
+model Rental {
+  id                     Int                 @id @default(autoincrement())
+  status                 RentalStatus        @default(PENDING_PAYMENT)
+  rentalDate             DateTime            @default(now())
+  dueDate                DateTime
+  returnDate             DateTime?
+  shippingAddress        Json
+  rentalFee              Float
+  securityDeposit        Float
+  damageWaiverFee        Float
+  totalPaid              Float
+  shippingProvider       String?
+  outboundTrackingNumber String?
+  returnTrackingNumber   String?
+  user                   User                @relation(fields: [userId], references: [id], onDelete: Restrict)
+  userId                 Int
+  userSubscription       UserSubscription?   @relation(fields: [userSubscriptionId], references: [id], onDelete: SetNull)
+  userSubscriptionId     Int?
+  items                  RentalItem[]
+  payments               Payment[]
+  payouts                Payout[]
+  @@index([status, userId])
+}
+
+model RentalItem {
+  id       Int    @id @default(autoincrement())
+  rental   Rental @relation(fields: [rentalId], references: [id], onDelete: Cascade)
+  rentalId Int
+  item     Item   @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  itemId   Int
+  @@unique([rentalId, itemId])
+}
+
+model Payment {
+  id               Int      @id @default(autoincrement())
+  amount           Float
+  status           String
+  method           String
+  paymentGatewayId String   @unique
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [id])
+  userId           Int
+  rental           Rental?  @relation(fields: [rentalId], references: [id])
+  rentalId         Int?
+}
+
+model Payout {
+  id         Int      @id @default(autoincrement())
+  amount     Float
+  status     String
+  payoutDate DateTime
+  createdAt  DateTime @default(now())
+  seller     Seller   @relation(fields: [sellerId], references: [id])
+  sellerId   Int
+  rental     Rental   @relation(fields: [rentalId], references: [id])
+  rentalId   Int
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int        @unique
+  items     CartItem[]
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  quantity  Int     @default(1)
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId    Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  @@unique([cartId, productId])
+}
+
+model Wishlist {
+  id     Int            @id @default(autoincrement())
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int            @unique
+  items  WishlistItem[]
+}
+
+model WishlistItem {
+  id         Int      @id @default(autoincrement())
+  addedAt    DateTime @default(now())
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  wishlistId Int
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId  Int
+  @@unique([wishlistId, productId])
+}
