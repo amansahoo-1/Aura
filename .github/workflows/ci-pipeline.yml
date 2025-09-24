@@ -13,42 +13,38 @@ jobs:
     name: Build & Test (${{ matrix.project }})
     runs-on: ubuntu-latest
 
-    # Matrix Strategy: Run the same steps for both frontend and backend
     strategy:
       matrix:
         node-version: ["18.x"]
         project: ["backend", "frontend"]
 
     steps:
-      # 1. Get the code from the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup the specified version of Node.js
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm" # Use pnpm for caching
+          # Correctly use npm for caching
+          cache: "npm"
+          # This line below is needed to specify the path for the cache
+          cache-dependency-path: ${{ matrix.project }}/package-lock.json
 
-      # 3. Install dependencies using pnpm
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        # Correctly use npm install
+        run: npm install
         working-directory: ./${{ matrix.project }}
 
-      # 4. Run the linter to check code style
       - name: Run Linter ✅
-        run: pnpm run lint
+        run: npm run lint
         working-directory: ./${{ matrix.project }}
 
-      # 5. Run tests to ensure code correctness
       - name: Run Tests 🧪
-        run: pnpm test
-        # The backend test script already includes coverage flags
+        run: npm test
         working-directory: ./${{ matrix.project }}
 
-      # 6. Run the build command (only for the frontend)
       - name: Run Build 🏗️
         if: matrix.project == 'frontend'
-        run: pnpm run build
+        run: npm run build
         working-directory: ./${{ matrix.project }}
