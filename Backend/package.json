@@ -23,7 +23,7 @@
     "test": "cross-env NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
     "test:watch": "npm test -- --watchAll",
     "test:coverage": "npm test -- --coverage --collectCoverageFrom='/**/*.js'",
-    "lint": "eslint tests --ext .js --fix --max-warnings=0",
+    "lint": "eslint . --ext .js --fix --max-warnings=0",
     "format": "prettier --write '/**/*.{js,json}' 'tests/**/*.{js,json}'",
     "clean": "rimraf dist node_modules/.cache",
     "prepare": "husky install && prisma generate",
