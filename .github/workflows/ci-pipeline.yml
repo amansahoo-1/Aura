@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         node-version: ["18.x"]
-        project: ["backend", "frontend"]
+        project: ["Backend", "frontend"]
 
     steps:
       - name: Checkout repository
