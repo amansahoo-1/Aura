@@ -91,7 +91,7 @@ function AllProductsList() {
 }
 
 // Wrap with Suspense
-export default function Home() {
+export default function ProductsPage() {
   return (
     <Suspense fallback={<div className="text-center py-20">Loading...</div>}>
       <AllProductsList />
