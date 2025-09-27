@@ -1,100 +1,65 @@
+// src/app/products/page.tsx
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import api from "@/lib/api";
+import React, { useState, useEffect } from "react";
+import { ProductCard } from "@/components/products/ProductCard";
+import { Spinner } from "@/components/ui/Spinner";
+import { Product, Pagination } from "@/types";
+import api from "@/lib/axios";
 
-// This component is intentionally similar to the homepage for now.
-// You can customize it later to have a unique layout or features
-// specific to the /products route.
-
-// --- Type Definitions ---
-interface Product {
-  id: number;
-  name: string;
-  oneTimeRentalFee: number;
-  imageUrls: string[];
-  seller: {
-    brandName: string;
-  };
-}
-
-// --- Main Page Component ---
-function AllProductsList() {
-  const searchParams = useSearchParams();
+export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setLoading(true);
       try {
-        const params = new URLSearchParams(searchParams.toString());
-        if (!params.get("page")) params.set("page", "1");
-        if (!params.get("limit")) params.set("limit", "12");
+        setIsLoading(true);
+        setError(null);
+        // Example with query params, you can make this dynamic with filters
+        const params = new URLSearchParams({ page: "1", limit: "12" });
+        const response = await api.get(`/products?${params.toString()}`);
 
-        const endpoint = params.has("q")
-          ? `/products/search?${params.toString()}`
-          : `/products?${params.toString()}`;
-
-        const response = await api.get(endpoint);
         setProducts(response.data.data.data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
+        setPagination(response.data.data.pagination);
+      } catch (err) {
+        setError("Failed to load products. Please try again later.");
+        console.error(err);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
-    fetchProducts();
-  }, [searchParams]);
 
-  if (loading) {
-    return <div className="text-center py-20">Loading All Products...</div>;
+    fetchProducts();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500 mt-10">{error}</div>;
   }
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">All Products</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {products.map((product) => (
-          <Link
-            href={`/products/${product.id}`}
-            key={product.id}
-            className="group"
-          >
-            <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 group-hover:scale-105">
-              <div className="relative w-full h-64">
-                <Image
-                  src={product.imageUrls?.[0] || "/placeholder.png"}
-                  alt={product.name}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
-              <div className="p-4 border-t">
-                <h2 className="text-md font-semibold text-gray-800 truncate">
-                  {product.name}
-                </h2>
-                <p className="text-purple-600 font-bold mt-2">
-                  Rent for ₹{product.oneTimeRentalFee.toLocaleString("en-IN")}
-                </p>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </main>
-  );
-}
-
-// Wrap with Suspense
-export default function ProductsPage() {
-  return (
-    <Suspense fallback={<div className="text-center py-20">Loading...</div>}>
-      <AllProductsList />
-    </Suspense>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Explore Our Collection</h1>
+      {products.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      ) : (
+        <p>No products found.</p>
+      )}
+      {/* You can add pagination controls here using the `pagination` state */}
+    </div>
   );
 }

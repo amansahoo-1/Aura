@@ -8,12 +8,9 @@ import {
   successResponse,
   errorResponse,
 } from "../middleware/errorMiddleware.js";
-// ✅ FIX: Changed the import to the standard @prisma/client package
 import { Role, UserStatus, KycStatus } from "@prisma/client";
 
-// ✅ FIX: Removed 'status' as it no longer exists on the Admin model
 export const adminSelectFields = {
-  // ... (rest of the file is correct)
   id: true,
   name: true,
   email: true,

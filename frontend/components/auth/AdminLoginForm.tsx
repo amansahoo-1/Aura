@@ -8,7 +8,7 @@ import { isAxiosError } from "axios";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
-export const UserLoginForm = () => {
+export const AdminLoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export const UserLoginForm = () => {
     setError(null);
 
     try {
-      const response = await api.post("/auth/login/user", {
+      const response = await api.post("/auth/login/admin", {
         email,
         password,
       });
@@ -47,7 +47,7 @@ export const UserLoginForm = () => {
       <Input
         className="text-black"
         type="email"
-        placeholder="Email"
+        placeholder="Admin Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
@@ -61,8 +61,12 @@ export const UserLoginForm = () => {
         required
       />
       {error && <p className="text-red-500 text-sm">{error}</p>}
-      <Button type="submit" disabled={isLoading}>
-        {isLoading ? "Logging in..." : "Login as User"}
+      <Button
+        type="submit"
+        disabled={isLoading}
+        className="bg-gray-700 hover:bg-gray-800"
+      >
+        {isLoading ? "Logging in..." : "Login as Admin"}
       </Button>
     </form>
   );
