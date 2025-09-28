@@ -34,7 +34,9 @@ export const authenticate = async (req, res, next) => {
     }
 
     // Attach the full user/seller/admin object to the request.
-    req.user = entity;
+    //  Combine the database entity with the role from the token.
+    // This ensures req.user.role is available for the checkRole middleware.
+    req.user = { ...entity, role: decoded.role };
 
     next();
   } catch (error) {

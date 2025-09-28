@@ -12,6 +12,7 @@ import {
   updateUserKycStatus,
   getUserByIdForAdmin,
   getSellerByIdForAdmin,
+  getAllAdmins,
 } from "../controllers/adminController.js";
 import {
   adminCreateSchema,
@@ -35,6 +36,7 @@ adminRouter.use(authenticate, requireAuth(), checkAccountStatus);
 
 // --- SuperAdmin Only: Admin User Management ---
 const superAdminOnly = checkRole([Role.SUPERADMIN]);
+adminRouter.get("/", superAdminOnly, asyncHandler(getAllAdmins));
 
 adminRouter.post(
   "/",

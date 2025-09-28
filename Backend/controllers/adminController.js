@@ -190,3 +190,26 @@ export const getSellerByIdForAdmin = asyncHandler(async (req, res) => {
   }
   return successResponse(res, seller, "Seller details retrieved");
 });
+
+// Add this new function to your adminController.js file
+
+/**
+ * @desc    Get all admin accounts
+ * @route   GET /api/admins
+ * @access  Private/SuperAdmin
+ */
+export const getAllAdmins = asyncHandler(async (req, res) => {
+  const admins = await prisma.admin.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      createdAt: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return successResponse(res, admins, "Admins retrieved successfully");
+});
