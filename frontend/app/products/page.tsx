@@ -49,15 +49,17 @@ export default function ProductsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Explore Our Collection</h1>
+      <h1 className="text-3xl text-black font-bold mb-6">
+        Explore Our Collection
+      </h1>
       {products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className=" text-black grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
       ) : (
-        <p>No products found.</p>
+        <p className="text-black">No products found.</p>
       )}
       {/* You can add pagination controls here using the `pagination` state */}
     </div>

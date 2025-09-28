@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import api from "@/lib/axios";
 import { AdminViewSeller } from "@/types";
@@ -29,33 +30,51 @@ export const SellerList = () => {
     <div className="bg-white p-6 rounded-lg shadow">
       <h2 className="text-xl font-bold mb-4">Platform Sellers</h2>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-500">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                 Brand Name
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                 Email
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                 KYC
               </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-black uppercase tracking-wider">
+                Actions
+              </th>{" "}
+              {/* Add Actions header */}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-500">
             {sellers.map((seller) => (
               <tr key={seller.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap text-black">
                   {seller.brandName}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">{seller.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{seller.status}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap text-black">
+                  {seller.email}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-black">
+                  {seller.status}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-black">
                   {seller.kycStatus}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  {" "}
+                  {/* Add Manage link */}
+                  <Link
+                    href={`/dashboard/admin/sellers/${seller.id}`}
+                    className="text-gray-600 hover:text-gray-900"
+                  >
+                    Manage
+                  </Link>
                 </td>
               </tr>
             ))}

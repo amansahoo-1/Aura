@@ -128,3 +128,144 @@ export interface AdminViewSeller {
   kycStatus: KycStatus;
   createdAt: string;
 }
+
+// --- Cart Types ---
+export interface CartItem {
+  id: number;
+  quantity: number;
+  product: Product;
+}
+
+export interface CartMeta {
+  subtotal: number;
+  tax: number;
+  total: number;
+  itemCount: number;
+}
+
+export interface Cart {
+  id: number;
+  userId: number;
+  items: CartItem[];
+  meta: CartMeta;
+}
+
+// --- Wishlist Types ---
+export interface WishlistItem {
+  id: number;
+  addedAt: string;
+  product: Product;
+}
+
+export interface Wishlist {
+  id: number;
+  userId: number;
+  items: WishlistItem[];
+}
+
+// --- Discount Types (for Admin) ---
+export interface Discount {
+  id: string;
+  code: string;
+  percentage: number;
+  validTill: string;
+}
+
+// --- Review Types ---
+export interface Review {
+  id: number;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+  user: {
+    name: string;
+  };
+}
+
+// --- Inquiry Types ---
+export interface Inquiry {
+  id: number;
+  message: string;
+  status: "PENDING" | "ASSIGNED" | "RESPONDED" | "RESOLVED";
+  createdAt: string;
+}
+
+// --- KYC Types ---
+// KycStatus enum is already defined from our previous work.
+
+// --- Invoice Types ---
+export interface Invoice {
+  id: number;
+  pdfUrl: string;
+  totalAmount: number;
+  createdAt: string;
+  order: {
+    // Assuming a rental is an order
+    id: number;
+    status: string;
+  };
+}
+
+// --- Rental & Checkout Types ---
+// We already have an Address type from earlier
+export interface Rental {
+  id: number;
+  status: string;
+  rentalDate: string;
+  dueDate: string;
+  totalPaid: number;
+  shippingAddress: Address;
+  items: { product: Product }[]; // Simplified for history view
+}
+
+export interface InitiatedRental {
+  id: number;
+  rentalFee: number;
+  securityDeposit: number;
+  damageWaiverFee: number;
+  totalAmountDue: number;
+}
+
+// --- Subscription Types ---
+export interface SubscriptionPlan {
+  id: number;
+  name: string;
+  price: number;
+  itemLimit: number;
+  description?: string;
+}
+
+export interface UserSubscription {
+  id: number;
+  status: "ACTIVE" | "CANCELLED" | "EXPIRED";
+  currentPeriodEndDate: string;
+  plan: SubscriptionPlan;
+}
+
+export interface AdminViewUserDetail {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string;
+  status: UserStatus;
+  kycStatus: KycStatus;
+  createdAt: string;
+  _count: {
+    rentals: number;
+    addresses: number;
+  };
+}
+
+export interface AdminViewSellerDetail {
+  id: number;
+  brandName: string;
+  contactPerson: string;
+  email: string;
+  phone?: string;
+  status: UserStatus;
+  kycStatus: KycStatus;
+  createdAt: string;
+  _count: {
+    products: number;
+  };
+}

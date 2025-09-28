@@ -32,7 +32,7 @@ export const MyProductsList = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-bold mb-4">My Products</h2>
+      <h2 className="text-xl text-black font-bold mb-4">My Products</h2>
       {products.length > 0 ? (
         <ul className="divide-y divide-gray-200">
           {products.map((product) => (
@@ -45,8 +45,8 @@ export const MyProductsList = () => {
                 className="rounded-md object-cover"
               />
               <div className="flex-grow">
-                <p className="font-semibold">{product.name}</p>
-                <p className="text-sm text-gray-500">
+                <p className="font-semibold text-black">{product.name}</p>
+                <p className="text-sm text-gray-950">
                   Fee: ₹{product.oneTimeRentalFee}
                 </p>
               </div>
@@ -63,7 +63,7 @@ export const MyProductsList = () => {
           ))}
         </ul>
       ) : (
-        <p>You have not added any products yet.</p>
+        <p className="text-black">You have not added any products yet.</p>
       )}
     </div>
   );

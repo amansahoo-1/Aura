@@ -5,11 +5,11 @@ export default function UserLoginPage() {
   return (
     <>
       <div className="text-center">
-        <h2 className="text-2xl font-bold">User Login</h2>
+        <h2 className="text-2xl text-cyan-950 font-bold">User Login</h2>
         <p className="text-gray-600">Access your account and rentals.</p>
       </div>
       <UserLoginForm />
-      <p className="mt-4 text-sm text-center">
+      <p className="mt-4 text-sm text-center text-black">
         New here?{" "}
         <Link
           href="/register/user"

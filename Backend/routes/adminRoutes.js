@@ -10,6 +10,8 @@ import {
   getAllSellers,
   updateSellerKycStatus,
   updateUserKycStatus,
+  getUserByIdForAdmin,
+  getSellerByIdForAdmin,
 } from "../controllers/adminController.js";
 import {
   adminCreateSchema,
@@ -75,6 +77,21 @@ adminRouter.patch(
     body: z.object({ kycStatus: z.nativeEnum(KycStatus) }),
   }),
   asyncHandler(updateUserKycStatus)
+);
+
+// routes of managing individual seller and users
+adminRouter.get(
+  "/users/:userId",
+  checkRole(managementRoles),
+  validateRequest({ params: z.object({ userId: z.coerce.number() }) }),
+  asyncHandler(getUserByIdForAdmin)
+);
+
+adminRouter.get(
+  "/sellers/:sellerId",
+  checkRole(managementRoles),
+  validateRequest({ params: z.object({ sellerId: z.coerce.number() }) }),
+  asyncHandler(getSellerByIdForAdmin)
 );
 
 // Routes for managing Sellers

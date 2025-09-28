@@ -20,6 +20,7 @@ import {
 } from "../validations/user.validation.js";
 import { validateRequest } from "../middleware/validation.middleware.js";
 import { authenticate, requireAuth } from "../middleware/authMiddleware.js";
+import { getMyRentals } from "../controllers/rentalControllers.js";
 // ❌ The loginSchema import is no longer needed here
 
 const userRouter = express.Router();
@@ -63,4 +64,5 @@ userRouter
     asyncHandler(deleteAddress)
   );
 
+userRouter.get("/rentals/me", asyncHandler(getMyRentals));
 export default userRouter;

@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function LoginPage() {
   return (
     <div className="text-center">
-      <h2 className="text-2xl font-bold">Login</h2>
+      <h2 className="text-2xl  text-black font-bold">Login</h2>
       <div className="mt-6 space-y-4">
         <Link
           href="/login/user"
@@ -24,7 +24,7 @@ export default function LoginPage() {
           Login as Admin
         </Link>
       </div>
-      <p className="mt-4 text-sm">
+      <p className="mt-4 text-sm text-black">
         Do not have an account?{" "}
         <Link
           href="/register/user"

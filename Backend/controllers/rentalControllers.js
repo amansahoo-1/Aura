@@ -201,3 +201,42 @@ async function calculateRentalFees(items) {
     fees.rentalFee + fees.securityDeposit + fees.damageWaiverFee;
   return { fees, totalAmount };
 }
+
+// Add this new function to your rentalController.js file
+
+/**
+ * @desc    Get the rental history for the logged-in user
+ * @route   GET /api/users/rentals/me
+ * @access  Private/User
+ */
+export const getMyRentals = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+
+  const rentals = await prisma.rental.findMany({
+    where: { userId },
+    orderBy: { rentalDate: "desc" },
+    include: {
+      items: {
+        include: {
+          item: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  imageUrls: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return successResponse(
+    res,
+    rentals,
+    "Rental history retrieved successfully."
+  );
+});

@@ -43,8 +43,8 @@ export default function DashboardLayout({
   return (
     <div>
       <header className="p-4 bg-white shadow">
-        <h1 className="text-xl">
-          Welcome, {getDisplayName()} ({user?.role})
+        <h1 className="text-xl text-emerald-700">
+          <b> Welcome, {getDisplayName()}</b>
         </h1>
       </header>
       <main className="p-4">{children}</main>
