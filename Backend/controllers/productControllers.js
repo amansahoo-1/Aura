@@ -13,7 +13,10 @@ import {
  * @access  Public
  */
 export const getProducts = asyncHandler(async (req, res) => {
-  const { page, limit, category, material, minFee, maxFee, sortBy } = req.query;
+  // Parse query parameters into numbers and provide defaults
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const { category, material, minFee, maxFee, sortBy } = req.query;
   const skip = (page - 1) * limit;
 
   // Build the dynamic 'where' clause for filtering
@@ -22,8 +25,8 @@ export const getProducts = asyncHandler(async (req, res) => {
     category: category || undefined,
     material: material || undefined,
     oneTimeRentalFee: {
-      gte: minFee || undefined,
-      lte: maxFee || undefined,
+      gte: minFee ? Number(minFee) : undefined,
+      lte: maxFee ? Number(maxFee) : undefined,
     },
   };
 
@@ -38,8 +41,8 @@ export const getProducts = asyncHandler(async (req, res) => {
   const [products, total] = await prisma.$transaction([
     prisma.product.findMany({
       where,
-      skip,
-      take: limit,
+      skip: skip, //for correctly passing a number
+      take: limit, //for correctly passing a number
       orderBy,
       include: {
         seller: { select: { brandName: true } },

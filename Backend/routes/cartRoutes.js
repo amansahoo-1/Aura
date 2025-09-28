@@ -1,68 +1,48 @@
 // backend/routes/cartRouter.js
+
 import express from "express";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import {
   getCart,
-  updateCart,
   addCartItem,
   removeCartItem,
   clearCart,
-  getCartItemCount,
-  // ❌ REMOVED: applyDiscount function
-} from "../controllers/cartControllers.js"; // Corrected filename for consistency
-import {
-  cartItemSchema,
-  cartUpdateSchema,
-} from "../validations/cart.validation.js";
+} from "../controllers/cartControllers.js";
+import { cartItemSchema } from "../validations/cart.validation.js";
 import { validateRequest } from "../middleware/validation.middleware.js";
 import {
   authenticate,
   requireAuth,
   checkAccountStatus,
-  authorizeUserAccess,
+  checkRole, // We will use this for authorization now
 } from "../middleware/authMiddleware.js";
-import { Role } from "@prisma/client/index.js";
+import { Role } from "@prisma/client";
+import { productIdParamSchema } from "../validations/product.validation.js";
 
 const cartRouter = express.Router();
 
-// Apply authentication middleware to all cart routes
-cartRouter.use(authenticate, requireAuth(), checkAccountStatus);
-
-// Cart Routes (User-specific and authorized)
-cartRouter.get("/:userId", authorizeUserAccess, asyncHandler(getCart));
-
-cartRouter.get(
-  "/:userId/count",
-  authorizeUserAccess,
-  asyncHandler(getCartItemCount)
+// Apply authentication and ensure the user is a 'USER' for all cart routes
+cartRouter.use(
+  authenticate,
+  requireAuth(),
+  checkAccountStatus,
+  checkRole(["USER"])
 );
 
-cartRouter.put(
-  "/:userId",
-  authorizeUserAccess,
-  validateRequest({ body: cartUpdateSchema }),
-  asyncHandler(updateCart)
-);
+cartRouter.get("/", asyncHandler(getCart));
 
 cartRouter.post(
-  "/:userId/items",
-  authorizeUserAccess,
+  "/items",
   validateRequest({ body: cartItemSchema }),
   asyncHandler(addCartItem)
 );
 
 cartRouter.delete(
-  "/:userId/items/:productId",
-  authorizeUserAccess,
+  "/items/:productId",
+  validateRequest({ params: productIdParamSchema }),
   asyncHandler(removeCartItem)
 );
 
-cartRouter.delete(
-  "/:userId/clear",
-  authorizeUserAccess,
-  asyncHandler(clearCart)
-);
-
-// ❌ REMOVED: The /apply-discount route is removed as discounts are handled at checkout.
+cartRouter.delete("/clear", asyncHandler(clearCart));
 
 export default cartRouter;

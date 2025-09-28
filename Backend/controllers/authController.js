@@ -18,12 +18,9 @@ import {
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, phone, initialAddress } = req.body;
 
-  // ✨ THIS IS THE FINAL FIX ✨
-  // We are forcing Prisma to only select the 'id' to prevent it from
-  // incorrectly looking for the old 'address' column.
   const existingUser = await prisma.user.findUnique({
     where: { email },
-    select: { id: true }, // This makes the query explicit and safe.
+    select: { id: true },
   });
 
   if (existingUser) {

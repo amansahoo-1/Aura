@@ -8,12 +8,9 @@ import {
   successResponse,
   errorResponse,
 } from "../middleware/errorMiddleware.js";
-// ✅ FIX: Changed the import to the standard @prisma/client package
 import { Role, UserStatus, KycStatus } from "@prisma/client";
 
-// ✅ FIX: Removed 'status' as it no longer exists on the Admin model
 export const adminSelectFields = {
-  // ... (rest of the file is correct)
   id: true,
   name: true,
   email: true,
@@ -132,4 +129,87 @@ export const updateUserKycStatus = asyncHandler(async (req, res) => {
     select: { id: true, name: true, kycStatus: true },
   });
   return successResponse(res, updatedUser, "User KYC status updated");
+});
+
+// Add these two new functions to your adminController.js file
+
+// ... other functions like getAllUsers, etc.
+
+/**
+ * @desc    Get a single user's details for an admin
+ * @route   GET /api/admins/users/:userId
+ * @access  Private/Admin
+ */
+export const getUserByIdForAdmin = asyncHandler(async (req, res) => {
+  const userId = parseInt(req.params.userId, 10);
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    // Select all relevant fields an admin would need
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      status: true,
+      kycStatus: true,
+      createdAt: true,
+      _count: { select: { rentals: true, addresses: true } },
+    },
+  });
+
+  if (!user) {
+    return errorResponse(res, "User not found", 404);
+  }
+  return successResponse(res, user, "User details retrieved");
+});
+
+/**
+ * @desc    Get a single seller's details for an admin
+ * @route   GET /api/admins/sellers/:sellerId
+ * @access  Private/Admin
+ */
+export const getSellerByIdForAdmin = asyncHandler(async (req, res) => {
+  const sellerId = parseInt(req.params.sellerId, 10);
+  const seller = await prisma.seller.findUnique({
+    where: { id: sellerId },
+    select: {
+      id: true,
+      brandName: true,
+      contactPerson: true,
+      email: true,
+      phone: true,
+      status: true,
+      kycStatus: true,
+      createdAt: true,
+      _count: { select: { products: true } },
+    },
+  });
+
+  if (!seller) {
+    return errorResponse(res, "Seller not found", 404);
+  }
+  return successResponse(res, seller, "Seller details retrieved");
+});
+
+// Add this new function to your adminController.js file
+
+/**
+ * @desc    Get all admin accounts
+ * @route   GET /api/admins
+ * @access  Private/SuperAdmin
+ */
+export const getAllAdmins = asyncHandler(async (req, res) => {
+  const admins = await prisma.admin.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      createdAt: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return successResponse(res, admins, "Admins retrieved successfully");
 });

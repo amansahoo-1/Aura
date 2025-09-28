@@ -1,135 +1,96 @@
-// middleware/authMiddleware.js
-import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client/index.js";
+// backend/middleware/authMiddleware.js
+
+import { PrismaClient } from "@prisma/client";
 import { verifyToken } from "../utils/jwt.js";
 
 const prisma = new PrismaClient();
 
 /**
- * ✅ Attach authenticated user/admin to request (decoded from token)
+ * Attaches the authenticated entity (user, seller, or admin) to the request object.
  */
-const authenticate = async (req, res, next) => {
+export const authenticate = async (req, res, next) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
-  if (!token) return next(); // allow public routes
+  if (!token) {
+    // No token provided, proceed to see if it's a public route.
+    return next();
+  }
 
   try {
-    const decoded = verifyToken(token); // { id, role, email, ... }
-    let user;
+    const decoded = verifyToken(token); // e.g., { id: 1, role: 'SELLER' }
+    let entity = null;
 
+    // ✨ FIX: Added specific logic to handle the 'SELLER' role.
     if (decoded.role === "USER") {
-      user = await prisma.user.findUnique({
-        where: { id: decoded.id },
-      });
-    } else {
-      user = await prisma.admin.findUnique({
-        where: { id: decoded.id },
-      });
+      entity = await prisma.user.findUnique({ where: { id: decoded.id } });
+    } else if (decoded.role === "SELLER") {
+      entity = await prisma.seller.findUnique({ where: { id: decoded.id } });
+    } else if (["ADMIN", "SUPERADMIN", "OPERATIONS"].includes(decoded.role)) {
+      entity = await prisma.admin.findUnique({ where: { id: decoded.id } });
     }
 
-    if (!user) return res.status(401).json({ error: "User not found" });
+    if (!entity) {
+      // The user ID/role in the token does not exist in the database.
+      return res.status(401).json({ message: "User not found." });
+    }
 
-    req.user = {
-      ...decoded, // carry id, role, email
-      ...user, // merge db data like status
-    };
+    // Attach the full user/seller/admin object to the request.
+    //  Combine the database entity with the role from the token.
+    // This ensures req.user.role is available for the checkRole middleware.
+    req.user = { ...entity, role: decoded.role };
 
     next();
   } catch (error) {
     return res.status(401).json({
-      error:
+      message:
         error.name === "TokenExpiredError" ? "Token expired" : "Invalid token",
     });
   }
 };
 
 /**
- * ✅ Ensure user is authenticated + authorized (supports role check)
+ * Ensures a user is authenticated before proceeding.
  */
-const requireAuth = (roles = []) => {
+export const requireAuth = () => {
   return (req, res, next) => {
     if (!req.user) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "Authentication required" });
     }
-
-    if (roles.length && !roles.includes(req.user.role)) {
-      return res.status(403).json({ message: "Forbidden" });
-    }
-
     next();
   };
 };
 
 /**
- * ✅ For Admin-specific protection (not general user)
+ * Checks if the authenticated user has one of the specified roles.
  */
-const requireAdmin = async (req, res, next) => {
-  if (
-    !req.user ||
-    (req.user.role !== "ADMIN" && req.user.role !== "SUPERADMIN")
-  ) {
-    return res.status(403).json({ error: "Admin access required" });
-  }
-
-  const admin = await prisma.admin.findUnique({
-    where: { id: req.user.id },
-  });
-
-  if (!admin) return res.status(403).json({ error: "Admin not found" });
-
-  next();
+export const checkRole = (roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res
+        .status(403)
+        .json({ message: "Access denied. You do not have the required role." });
+    }
+    next();
+  };
 };
 
 /**
- * ✅ Status enforcement middleware
+ * Enforces account status for Users and Sellers.
  */
-const checkAccountStatus = async (req, res, next) => {
-  if (!req.user) return next();
-
-  if (req.user.status === "SUSPENDED") {
-    return res.status(403).json({ error: "Account suspended" });
-  }
-
-  if (req.user.status === "DELETED") {
-    return res.status(403).json({ error: "Account deleted" });
-  }
-
-  next();
-};
-
-/**
- * ✅ Allows only same-user or admin to access userId-specific resources
- */
-const authorizeUserAccess = async (req, res, next) => {
-  const { userId } = req.params;
-
-  if (
-    req.user.role === "ADMIN" ||
-    req.user.role === "SUPERADMIN" ||
-    req.user.id === parseInt(userId)
-  ) {
+export const checkAccountStatus = async (req, res, next) => {
+  // This middleware is for Users and Sellers, who have a status field.
+  if (!req.user || !req.user.status) {
     return next();
   }
 
-  return res.status(403).json({ error: "Unauthorized access to user data" });
-};
+  if (req.user.status === "SUSPENDED") {
+    return res
+      .status(403)
+      .json({ message: "Your account has been suspended." });
+  }
 
-/**
- * ✅ Reusable role checker
- */
-const checkRole = (roles) => {
-  return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
-      return res.status(403).json({ message: "Access denied" });
-    }
-    next();
-  };
-};
+  if (req.user.status === "DELETED") {
+    return res.status(403).json({ message: "Your account has been deleted." });
+  }
 
-export {
-  authenticate,
-  requireAuth,
-  requireAdmin,
-  checkAccountStatus,
-  authorizeUserAccess,
-  checkRole,
+  next();
 };

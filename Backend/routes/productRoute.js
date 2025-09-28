@@ -28,18 +28,18 @@ import {
 
 const productRouter = express.Router();
 
-// Route to search for products
-productRouter.get(
-  "/search",
-  validateRequest({ query: productSearchSchema }),
-  asyncHandler(searchProducts)
-);
-
 // Route to get a list of all products with filtering
 productRouter.get(
   "/",
   validateRequest({ query: productFilterSchema }),
   asyncHandler(getProducts)
+);
+
+// Route to search for products
+productRouter.get(
+  "/search",
+  validateRequest({ query: productSearchSchema }),
+  asyncHandler(searchProducts)
 );
 
 // Route to get a single product by its ID

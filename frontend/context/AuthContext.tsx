@@ -1,110 +1,117 @@
 "use client";
 
-import { createContext, useState, useEffect, ReactNode } from "react";
-import { useRouter } from "next/navigation";
-import api from "@/lib/api";
-import axios from "axios";
-import { Role } from "@/hooks/useAuth";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useCallback, // Import useCallback
+} from "react";
+import { Admin, AuthenticatedUser, KycStatus, Role, UserStatus } from "@/types";
+import { setToken, removeToken, getToken } from "@/utils/cookies";
+import api from "@/lib/axios";
+import { jwtDecode } from "jwt-decode";
 
-interface UserType {
-  id: number;
-  email: string;
-  name?: string;
-  brandName?: string;
-}
-
-export interface AuthContextType {
-  user: UserType | null;
-  token: string | null;
+// ... (interface AuthContextType and getRoleFromToken remain the same) ...
+interface AuthContextType {
+  user: AuthenticatedUser | null;
   isAuthenticated: boolean;
-  loading: boolean;
-  login: (
-    email: string,
-    password: string,
-    role: Role
-  ) => Promise<{ success: boolean; message?: string }>;
+  isLoading: boolean;
+  login: (token: string) => Promise<void>;
   logout: () => void;
 }
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+const getRoleFromToken = (token: string): Role | null => {
+  try {
+    const decoded: { role: Role } = jwtDecode(token);
+    return decoded.role;
+  } catch (error) {
+    console.error("Invalid token:", error);
+    return null;
+  }
+};
 
-export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<UserType | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<AuthenticatedUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    try {
-      const storedToken = localStorage.getItem("authToken");
-      const storedUser = localStorage.getItem("authUser");
-      if (storedToken && storedUser) {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser) as UserType);
-      }
-    } catch (error) {
-      console.error("Failed to parse auth data from localStorage", error);
-    } finally {
-      setLoading(false);
-    }
+  // FIX 1: Memoize logout to make it a stable dependency
+  const logout = useCallback(() => {
+    removeToken();
+    setUser(null);
+    setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string, role: Role) => {
-    try {
-      const response = await api.post(`/auth/login/${role}`, {
-        email,
-        password,
-      });
-      const { token, ...userDataResponse } = response.data.data;
-      const userData = userDataResponse[role] as UserType;
-
-      setToken(token);
-      setUser(userData);
-
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("authUser", JSON.stringify(userData));
-
-      router.push(role === "user" ? "/" : "/dashboard");
-
-      return { success: true };
-    } catch (error: unknown) {
-      console.error(`Login failed for role ${role}:`, error);
-
-      let message = "An unknown error occurred.";
-      if (axios.isAxiosError(error) && error.response) {
-        message = error.response.data?.message || "Login failed";
-      } else if (error instanceof Error) {
-        message = error.message;
+  // FIX 2: Memoize fetchProfile and declare its dependency on the stable `logout` function
+  const fetchProfile = useCallback(
+    async (token: string) => {
+      setIsLoading(true);
+      const role = getRoleFromToken(token);
+      if (!role) {
+        logout();
+        return;
       }
 
-      return { success: false, message };
-    }
-  };
+      let profileEndpoint = "";
+      if (role === Role.USER) profileEndpoint = "/users/profile";
+      if (role === Role.SELLER) profileEndpoint = "/sellers/profile/me";
+      if ([Role.ADMIN, Role.SUPERADMIN, Role.OPERATIONS].includes(role)) {
+        try {
+          const decoded: Admin = jwtDecode(token);
+          setUser({
+            ...decoded,
+            role: decoded.role,
+            status: UserStatus.ACTIVE,
+            kycStatus: KycStatus.VERIFIED,
+            createdAt: "",
+            updatedAt: "",
+          });
+        } catch (e) {
+          logout();
+        }
+        setIsLoading(false);
+        return;
+      }
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("authUser");
-    router.push("/login");
-  };
+      try {
+        const response = await api.get(profileEndpoint);
+        setUser({ ...response.data.data, role });
+      } catch (error) {
+        console.error("Failed to fetch profile", error);
+        logout();
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [logout] // Dependency array for useCallback
+  );
 
-  const authContextValue: AuthContextType = {
-    user,
-    token,
-    isAuthenticated: !!token,
-    loading,
-    login,
-    logout,
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const token = getToken();
+      if (token) {
+        await fetchProfile(token);
+      } else {
+        setIsLoading(false);
+      }
+    };
+    initializeAuth();
+  }, [fetchProfile]); // FIX 3: Add the memoized fetchProfile as a dependency
+
+  const login = async (token: string) => {
+    setToken(token);
+    await fetchProfile(token);
   };
 
   return (
-    <AuthContext.Provider value={authContextValue}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated: !!user, isLoading, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
+};
