@@ -27,13 +27,13 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
   const [wishlistProductIds, setWishlistProductIds] = useState<Set<number>>(
     new Set()
   );
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   // The best way to fix this is to wrap fetchWishlist in the useCallback hook.
   //  This memoizes the function, meaning it won't be re-created on every render unless its own dependencies change.
   //  This makes your code more stable and performant.
   const fetchWishlist = useCallback(async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || user?.role !== "USER") {
       setWishlistItems([]);
       setWishlistProductIds(new Set());
       return;
@@ -48,7 +48,7 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error("Failed to fetch wishlist", error);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     fetchWishlist();

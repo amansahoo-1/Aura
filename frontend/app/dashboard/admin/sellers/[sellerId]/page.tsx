@@ -39,18 +39,18 @@ export default function ManageSellerPage() {
   }
 
   if (isLoading) return <Spinner />;
-  if (!seller) return <p>Seller not found.</p>;
+  if (!seller) return <p className="text-black">Seller not found.</p>;
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-2">
+      <h1 className="text-3xl text-black font-bold mb-2">
         Manage Seller: {seller.brandName}
       </h1>
-      <p className="text-gray-500 mb-8">
+      <p className="text-gray-700 mb-8">
         Contact: {seller.contactPerson} ({seller.email})
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className=" text-cyan-900 grid grid-cols-1 md:grid-cols-2 gap-8">
         <UpdateStatusForm
           entityId={sellerId}
           currentStatus={seller.kycStatus}

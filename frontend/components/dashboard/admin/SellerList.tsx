@@ -28,7 +28,7 @@ export const SellerList = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-bold mb-4">Platform Sellers</h2>
+      <h2 className="text-xl font-bold mb-4 text-black">Platform Sellers</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-500">
           <thead className="bg-gray-50">
@@ -47,8 +47,8 @@ export const SellerList = () => {
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-black uppercase tracking-wider">
                 Actions
-              </th>{" "}
-              {/* Add Actions header */}
+              </th>
+              {/* The invalid space and comment have been removed from here */}
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-500">

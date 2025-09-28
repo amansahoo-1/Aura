@@ -1,6 +1,7 @@
 // src/app/products/[productId]/page.tsx
 "use client";
 
+import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";

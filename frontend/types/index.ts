@@ -269,3 +269,45 @@ export interface AdminViewSellerDetail {
     products: number;
   };
 }
+
+export interface UserRegistrationDetail {
+  id: number;
+  email: string;
+  password: string;
+  phone: string;
+  initialAddress: string;
+}
+
+export interface SellerRegistrationDetail {
+  id: number;
+  brandName: string;
+  contactPerson: string;
+  email: string;
+  password: string;
+  phone: string;
+}
+
+// ... (keep all your existing types)
+
+// ADD THESE NEW TYPES FOR REGISTRATION PAYLOADS
+
+export type SellerRegistrationPayload = {
+  brandName: string;
+  contactPerson: string;
+  email: string;
+  password: string;
+  phone?: string;
+};
+
+export type UserRegistrationPayload = {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+  initialAddress?: {
+    addressLine: string;
+    city: string;
+    state: string;
+    postalCode: string;
+  };
+};

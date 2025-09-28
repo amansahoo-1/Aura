@@ -26,10 +26,12 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<Cart | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { isAuthenticated } = useAuth();
+  // assuming useAuth provides authentication status and user info
+  const { isAuthenticated, user } = useAuth();
 
   const fetchCart = useCallback(async () => {
-    if (!isAuthenticated) {
+    // Only fetch if authenticated AND the role is 'USER'
+    if (!isAuthenticated || user?.role !== "USER") {
       setCart(null);
       setIsLoading(false);
       return;
@@ -44,7 +46,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     fetchCart();

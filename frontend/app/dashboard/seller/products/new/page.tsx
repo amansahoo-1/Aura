@@ -1,7 +1,9 @@
-export default function SellerDashboard() {
+import React from "react";
+import AddProduct from "@/components/dashboard/seller/products/new/page";
+export default function SellerAddNewProduct() {
   return (
     <>
-      <h1 className="text-black font-bold">This is add new Product page</h1>
+      <AddProduct />
     </>
   );
 }

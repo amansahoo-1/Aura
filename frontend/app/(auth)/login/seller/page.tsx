@@ -9,7 +9,7 @@ export default function SellerLoginPage() {
         <p className="text-gray-900">Manage your products and payouts.</p>
       </div>
       <SellerLoginForm />
-      <p className="mt-4 text-sm text-center">
+      <p className="mt-4 text-sm text-black text-center">
         Want to sell?{" "}
         <Link
           href="/register/seller"

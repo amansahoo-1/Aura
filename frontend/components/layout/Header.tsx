@@ -19,8 +19,8 @@ export const Header = () => {
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-purple-600">
-          Swarnkart
+        <Link href="/" className="text-2xl font-bold text-cyan-900">
+          Aura
         </Link>
         <div className="flex items-center space-x-6">
           <Link
@@ -34,6 +34,17 @@ export const Header = () => {
             className="relative text-gray-600 hover:text-purple-600"
           >
             Cart
+            {isAuthenticated && itemCount > 0 && (
+              <span className="absolute -top-2 -right-3 bg-purple-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {itemCount}
+              </span>
+            )}
+          </Link>
+          <Link
+            href="/wishlist"
+            className="relative text-gray-600 hover:text-purple-600"
+          >
+            Wishlist
             {isAuthenticated && itemCount > 0 && (
               <span className="absolute -top-2 -right-3 bg-purple-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 {itemCount}

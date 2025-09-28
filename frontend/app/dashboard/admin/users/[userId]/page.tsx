@@ -14,21 +14,6 @@ export default function ManageUserPage() {
   const [user, setUser] = useState<AdminViewUserDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // useEffect(() => {
-  //   if (!userId) return;
-  //   const fetchUser = async () => {
-  //     try {
-  //       const response = await api.get(`/admins/users/${userId}`);
-  //       setUser(response.data.data);
-  //     } catch (err) {
-  //       console.error("Failed to fetch user", err);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-  //   fetchUser();
-  // }, [userId]);
-
   useEffect(() => {
     // ✅ Ensure userId is a string before fetching
     if (typeof userId !== "string") {
@@ -58,15 +43,17 @@ export default function ManageUserPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-2">Manage User: {user.name}</h1>
-      <p className="text-gray-500 mb-8">Email: {user.email}</p>
+      <h1 className="text-3xl text-black font-bold mb-2">
+        Manage User: {user.name}
+      </h1>
+      <p className="text-gray-700 mb-8">Email: {user.email}</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-cyan-900">
         <UpdateStatusForm
           entityId={userId as string}
           currentStatus={user.status}
           apiPath={`/admins/users/${userId}/status`}
-          statusEnum={UserStatus} // Pass the full enum object
+          statusEnum={UserStatus}
           title="Account Status"
           fieldName="status"
         />
