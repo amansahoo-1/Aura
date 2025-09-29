@@ -4,6 +4,7 @@ import { bootstrapSuperAdmin } from "../utils/init_admin.js";
 
 const Initrouter = express.Router();
 
-Initrouter.post("/init-superadmin", bootstrapSuperAdmin); // 🔒 Protect this in production!
+// Protect this in production!
+Initrouter.post("/init-superadmin", bootstrapSuperAdmin); // Protect this in production!
 
 export default Initrouter;

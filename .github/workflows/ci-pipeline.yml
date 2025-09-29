@@ -1,5 +1,5 @@
 # .github/workflows/ci-pipeline.yml
-name: Aura CI Pipeline 🚀
+name: Aura CI Pipeline
 
 # Triggers: Run this workflow on pushes and pull requests to main and develop branches
 on:
@@ -36,15 +36,15 @@ jobs:
         run: npm install
         working-directory: ./${{ matrix.project }}
 
-      - name: Run Linter ✅
+      - name: Run Linter
         run: npm run lint
         working-directory: ./${{ matrix.project }}
 
-      - name: Run Tests 🧪
+      - name: Run Tests
         run: npm test
         working-directory: ./${{ matrix.project }}
 
-      - name: Run Build 🏗️
+      - name: Run Build
         if: matrix.project == 'frontend'
         run: npm run build
         working-directory: ./${{ matrix.project }}

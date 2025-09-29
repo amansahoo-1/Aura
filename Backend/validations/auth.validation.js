@@ -11,7 +11,7 @@ export const loginSchema = z.object({
   password: passwordSchema,
 });
 
-// ✅ FIX: A schema for the new Address model structure
+// A schema for the new Address model structure
 const addressSchema = z.object({
   addressLine: z.string().min(5),
   city: z.string().min(2),
@@ -20,7 +20,7 @@ const addressSchema = z.object({
   country: z.string().optional().default("India"),
 });
 
-// ✅ FIX: The registration schema now accepts an optional 'initialAddress' object
+// The registration schema now accepts an optional 'initialAddress' object
 export const userRegisterSchema = z.object({
   name: z.string().min(2, "Name is required"),
   email: emailSchema,

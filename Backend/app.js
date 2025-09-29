@@ -10,7 +10,7 @@ import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 import { errorHandler, notFoundHandler } from "./middleware/errorMiddleware.js";
 
-// --- Import all the new and correct routers ---
+// --- Import all the routers ---
 import authRouter from "./routes/authRouter.js";
 import adminRouter from "./routes/adminRoutes.js";
 import sellerRouter from "./routes/sellerRoutes.js";
@@ -22,6 +22,7 @@ import cartRouter from "./routes/cartRoutes.js";
 import wishlistRouter from "./routes/wishlistRoutes.js";
 import dashboardRouter from "./routes/dashboardRoutes.js";
 import kycRouter from "./routes/kycRouter.js";
+import uploadRouter from "./routes/uploadRouter.js";
 
 // Config initialization
 const __filename = fileURLToPath(import.meta.url);
@@ -57,18 +58,19 @@ app.get("/health", (req, res) => {
 });
 
 // --- API Routes ---
-// This section now correctly maps all our new modules to logical endpoints.
+// This section maps all modules to logical endpoints.
 app.use("/api/auth", authRouter);
 app.use("/api/admins", adminRouter);
 app.use("/api/sellers", sellerRouter);
-app.use("/api/users", userRouter); // For user profile & address management
-app.use("/api/products", productRouter); // Public-facing product discovery
+app.use("/api/users", userRouter);
+app.use("/api/products", productRouter);
 app.use("/api/rentals", rentalRouter);
 app.use("/api/subscriptions", subscriptionRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/wishlist", wishlistRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/kyc", kycRouter);
+app.use("/api/upload", uploadRouter);
 
 // --- Error Handling Middleware (must be last) ---
 app.use(notFoundHandler);

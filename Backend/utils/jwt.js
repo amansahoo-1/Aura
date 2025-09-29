@@ -5,7 +5,7 @@ const JWT_EXPIRY = process.env.JWT_EXPIRY || "7d";
 
 if (!JWT_SECRET) {
   throw new Error(
-    "❌ JWT_SECRET is not defined. Check your .env file or dotenv config."
+    "JWT_SECRET is not defined. Check your .env file or dotenv config."
   );
 }
 
@@ -51,7 +51,6 @@ export const generateAdminToken = (admin) => {
   });
 };
 
-// ✨ NEW: Add the missing function for generating Seller tokens
 export const generateSellerToken = (seller) => {
   return generateToken({
     id: seller.id,

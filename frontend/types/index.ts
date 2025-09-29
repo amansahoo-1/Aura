@@ -207,7 +207,6 @@ export interface Invoice {
 }
 
 // --- Rental & Checkout Types ---
-// We already have an Address type from earlier
 export interface Rental {
   id: number;
   status: string;
@@ -215,7 +214,7 @@ export interface Rental {
   dueDate: string;
   totalPaid: number;
   shippingAddress: Address;
-  items: { product: Product }[]; // Simplified for history view
+  items: { product: Product }[];
 }
 
 export interface InitiatedRental {
@@ -286,10 +285,6 @@ export interface SellerRegistrationDetail {
   password: string;
   phone: string;
 }
-
-// ... (keep all your existing types)
-
-// ADD THESE NEW TYPES FOR REGISTRATION PAYLOADS
 
 export type SellerRegistrationPayload = {
   brandName: string;

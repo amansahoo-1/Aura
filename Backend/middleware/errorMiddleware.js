@@ -5,7 +5,7 @@ import { ZodError } from "zod";
  * Centralized error handler middleware
  */
 export const errorHandler = (err, req, res, next) => {
-  console.error("🔥 Error:", err);
+  console.error(" Error:", err);
 
   // Handle Zod validation errors
   if (err instanceof ZodError) {
@@ -68,7 +68,7 @@ export const notFoundHandler = (req, res, next) => {
 };
 
 /**
- * ✅ Success response wrapper
+ * Success response wrapper
  */
 export const successResponse = (
   res,
@@ -84,7 +84,7 @@ export const successResponse = (
 };
 
 /**
- * ❌ Error response wrapper
+ *  Error response wrapper
  */
 export const errorResponse = (
   res,

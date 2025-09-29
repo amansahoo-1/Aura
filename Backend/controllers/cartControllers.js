@@ -31,7 +31,7 @@ const calculateCartTotals = (items) => {
 };
 
 export const getCart = asyncHandler(async (req, res) => {
-  // ✅ FIX: Get userId securely from the token
+  // FIX: Get userId securely from the token
   const userId = req.user.id;
 
   const cart = await prisma.cart.upsert({
@@ -55,7 +55,7 @@ export const getCart = asyncHandler(async (req, res) => {
 });
 
 export const addCartItem = asyncHandler(async (req, res) => {
-  // ✅ FIX: Get userId securely from the token
+  // FIX: Get userId securely from the token
   const userId = req.user.id;
   const { productId, quantity } = req.body;
 
@@ -95,7 +95,7 @@ export const addCartItem = asyncHandler(async (req, res) => {
 });
 
 export const removeCartItem = asyncHandler(async (req, res) => {
-  // ✅ FIX: Get userId securely from the token
+  // FIX: Get userId securely from the token
   const userId = req.user.id;
   const productId = parseInt(req.params.productId, 10);
 
@@ -112,7 +112,7 @@ export const removeCartItem = asyncHandler(async (req, res) => {
 });
 
 export const clearCart = asyncHandler(async (req, res) => {
-  // ✅ FIX: Get userId securely from the token
+  // FIX: Get userId securely from the token
   const userId = req.user.id;
 
   const cart = await prisma.cart.findUnique({ where: { userId } });

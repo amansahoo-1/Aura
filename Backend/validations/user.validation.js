@@ -7,7 +7,6 @@ import {
   phoneSchema,
 } from "./common.validation.js";
 
-// ✨ NEW: A reusable schema for a user's address
 export const addressSchema = z.object({
   addressLine: z.string().min(5, "Address line is too short"),
   city: z.string().min(2, "City name is too short"),
@@ -16,7 +15,6 @@ export const addressSchema = z.object({
   country: z.string().optional().default("India"),
 });
 
-// ✅ FIX: User creation now accepts an optional, structured initial address
 export const userRegisterSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: emailSchema,
@@ -25,7 +23,6 @@ export const userRegisterSchema = z.object({
   initialAddress: addressSchema.optional(),
 });
 
-// ✅ FIX: User profile updates are now for user-specific fields only
 export const userUpdateProfileSchema = z
   .object({
     name: z.string().min(2).optional(),
@@ -35,7 +32,7 @@ export const userUpdateProfileSchema = z
     message: "At least one field must be provided for update",
   });
 
-// ✨ NEW: Schemas for dedicated address management
+//Schemas for dedicated address management
 export const addressCreateSchema = addressSchema;
 export const addressUpdateSchema = addressSchema
   .partial()

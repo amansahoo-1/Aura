@@ -72,7 +72,7 @@ export const deleteUser = asyncHandler(async (req, res) => {
 
 // --- Address Management ---
 
-// ✨ NEW: Controller to add a new address for the logged-in user
+//  NEW: Controller to add a new address for the logged-in user
 export const addAddress = asyncHandler(async (req, res) => {
   const userId = req.user.id;
   const addressData = req.body;
@@ -82,14 +82,14 @@ export const addAddress = asyncHandler(async (req, res) => {
   successResponse(res, newAddress, "Address added successfully", 201);
 });
 
-// ✨ NEW: Controller to list all addresses for the logged-in user
+//  NEW: Controller to list all addresses for the logged-in user
 export const listAddresses = asyncHandler(async (req, res) => {
   const userId = req.user.id;
   const addresses = await prisma.address.findMany({ where: { userId } });
   successResponse(res, addresses, "Addresses retrieved successfully");
 });
 
-// ✨ NEW: Controller to update an existing address
+//  NEW: Controller to update an existing address
 export const updateAddress = asyncHandler(async (req, res) => {
   const addressId = parseInt(req.params.addressId, 10);
   const updatedAddress = await prisma.address.update({
@@ -99,7 +99,7 @@ export const updateAddress = asyncHandler(async (req, res) => {
   successResponse(res, updatedAddress, "Address updated successfully");
 });
 
-// ✨ NEW: Controller to delete an address
+//  NEW: Controller to delete an address
 export const deleteAddress = asyncHandler(async (req, res) => {
   const addressId = parseInt(req.params.addressId, 10);
   await prisma.address.delete({ where: { id: addressId } });

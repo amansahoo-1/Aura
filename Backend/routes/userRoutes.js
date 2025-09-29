@@ -21,14 +21,14 @@ import {
 import { validateRequest } from "../middleware/validation.middleware.js";
 import { authenticate, requireAuth } from "../middleware/authMiddleware.js";
 import { getMyRentals } from "../controllers/rentalControllers.js";
-// ❌ The loginSchema import is no longer needed here
+//  The loginSchema import is no longer needed here
 
 const userRouter = express.Router();
 
-// ❌ The public login and register routes are removed.
+// The public login and register routes are removed.
 // They are now handled by authRouter.js
 
-// ✅ FIX: All routes are now protected and assume a user is already logged in.
+// All routes are now protected and assume a user is already logged in.
 userRouter.use(authenticate, requireAuth());
 
 // --- Profile Routes ---

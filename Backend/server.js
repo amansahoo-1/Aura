@@ -21,11 +21,11 @@ const printStartupInfo = () => {
   console.log(`\n\n--- Aura Jewellery Rental Platform ---`);
   console.log(``);
   console.log(`
-    🚀 Server running in ${NODE_ENV} mode
-    📡 Listening on Port: ${PORT}
-    🌐 Accepting requests from: ${process.env.CLIENT_URL || "Not Configured"}
-    🗄️  Connected to Database: ${getDatabaseInfo()}
-    🕒 Current Time: ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
+    Server running in ${NODE_ENV} mode
+    Listening on Port: ${PORT}
+    Accepting requests from: ${process.env.CLIENT_URL || "Not Configured"}
+    Connected to Database: ${getDatabaseInfo()}
+    Current Time: ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
   `);
   console.log(`-------------------------------------\n`);
 };
@@ -36,7 +36,7 @@ const server = app.listen(PORT, async () => {
     await prisma.$queryRaw`SELECT 1`;
     printStartupInfo();
   } catch (error) {
-    console.error("❌ DATABASE CONNECTION FAILED:", error.message);
+    console.error("DATABASE CONNECTION FAILED:", error.message);
     console.error(
       "Please check your DATABASE_URL environment variable and ensure the database is running."
     );
@@ -46,7 +46,7 @@ const server = app.listen(PORT, async () => {
 
 // Graceful shutdown handler
 const shutdown = async (signal) => {
-  console.log(`\n🛑 Received ${signal}, shutting down gracefully...`);
+  console.log(`\n Received ${signal}, shutting down gracefully...`);
   try {
     await new Promise((resolve, reject) => {
       server.close((err) => (err ? reject(err) : resolve()));

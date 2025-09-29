@@ -8,14 +8,14 @@ dotenv.config(); // Load environment variables
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Starting the seed process...");
+  console.log("Starting the seed process...");
 
   const superAdminEmail = process.env.SUPERADMIN_EMAIL;
   const superAdminPassword = process.env.SUPERADMIN_PASSWORD;
 
   if (!superAdminEmail || !superAdminPassword) {
     throw new Error(
-      "❌ SUPERADMIN_EMAIL and SUPERADMIN_PASSWORD must be set in your .env file."
+      "SUPERADMIN_EMAIL and SUPERADMIN_PASSWORD must be set in your .env file."
     );
   }
 
@@ -25,7 +25,7 @@ async function main() {
   });
 
   if (existingSuperAdmin) {
-    console.log("✅ SuperAdmin already exists. No action needed.");
+    console.log("SuperAdmin already exists. No action needed.");
     return;
   }
 
@@ -42,7 +42,7 @@ async function main() {
     },
   });
 
-  console.log("✅ SuperAdmin account created successfully!");
+  console.log("SuperAdmin account created successfully!");
 }
 
 main()

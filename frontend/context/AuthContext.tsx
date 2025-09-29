@@ -5,14 +5,13 @@ import React, {
   useState,
   useEffect,
   ReactNode,
-  useCallback, // Import useCallback
+  useCallback,
 } from "react";
 import { Admin, AuthenticatedUser, KycStatus, Role, UserStatus } from "@/types";
 import { setToken, removeToken, getToken } from "@/utils/cookies";
 import api from "@/lib/axios";
 import { jwtDecode } from "jwt-decode";
 
-// ... (interface AuthContextType and getRoleFromToken remain the same) ...
 interface AuthContextType {
   user: AuthenticatedUser | null;
   isAuthenticated: boolean;
@@ -39,14 +38,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthenticatedUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // FIX 1: Memoize logout to make it a stable dependency
+  //  Memoize logout to make it a stable dependency
   const logout = useCallback(() => {
     removeToken();
     setUser(null);
     setIsLoading(false);
   }, []);
 
-  // FIX 2: Memoize fetchProfile and declare its dependency on the stable `logout` function
+  // Memoize fetchProfile and declare its dependency on the stable `logout` function
   const fetchProfile = useCallback(
     async (token: string) => {
       setIsLoading(true);
@@ -70,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             createdAt: "",
             updatedAt: "",
           });
-        } catch (e) {
+        } catch (error) {
           logout();
         }
         setIsLoading(false);
@@ -100,7 +99,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     };
     initializeAuth();
-  }, [fetchProfile]); // FIX 3: Add the memoized fetchProfile as a dependency
+  }, [fetchProfile]); // Add the memoized fetchProfile as a dependency
 
   const login = async (token: string) => {
     setToken(token);

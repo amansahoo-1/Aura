@@ -3,7 +3,7 @@ import { z } from "zod";
 import { Role } from "@prisma/client/index.js";
 import { idSchema, emailSchema, passwordSchema } from "./common.validation.js";
 
-// ✅ FIX: Schema simplified to match the new Admin model in prisma.schema
+//Schema simplified to match the new Admin model in prisma.schema
 export const adminCreateSchema = z.object({
   name: z.string().min(2),
   email: emailSchema,
