@@ -31,7 +31,7 @@ import { z } from "zod";
 const adminRouter = express.Router();
 
 // --- Protected Admin Routes ---
-// ✅ FIX: The router now correctly assumes a user is already authenticated.
+// FIX: The router now correctly assumes a user is already authenticated.
 adminRouter.use(authenticate, requireAuth(), checkAccountStatus);
 
 // --- SuperAdmin Only: Admin User Management ---

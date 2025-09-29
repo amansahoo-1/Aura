@@ -3,9 +3,9 @@ import express from "express";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import {
   getDashboardMetrics,
-  getPlatformAnalytics, // ✅ FIX: Renamed for clarity
+  getPlatformAnalytics,
   exportData,
-  getSellerDashboardMetrics, // ✨ NEW: Import seller dashboard controller
+  getSellerDashboardMetrics,
 } from "../controllers/dashboardControllers.js";
 import {
   dashboardFilterSchema,
@@ -21,13 +21,11 @@ import { Role } from "@prisma/client/index.js";
 
 const dashboardRouter = express.Router();
 
-// ✨ NEW: Route for sellers to access their own dashboard
+//  Route for sellers to access their own dashboard
 dashboardRouter.get(
   "/seller/metrics",
   authenticate,
   checkAccountStatus,
-  // This would be a new checkRole function that checks for a 'SELLER' role
-  // checkRole(["SELLER"]),
   asyncHandler(getSellerDashboardMetrics)
 );
 

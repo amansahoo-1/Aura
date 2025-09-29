@@ -35,7 +35,7 @@ export const createAdmin = asyncHandler(async (req, res) => {
   return successResponse(res, newAdmin, "Admin created", 201);
 });
 
-// ⚠️ MAJOR CHANGE: This now performs a HARD DELETE.
+// MAJOR CHANGE: This now performs a HARD DELETE.
 export const deleteAdmin = asyncHandler(async (req, res) => {
   const adminId = parseInt(req.params.adminId, 10);
   if (req.user.id === adminId) {
@@ -48,7 +48,7 @@ export const deleteAdmin = asyncHandler(async (req, res) => {
 
 // --- User Management by Admin ---
 
-// ✨ NEW: Get all users with status and KYC info
+// NEW: Get all users with status and KYC info
 export const getAllUsers = asyncHandler(async (req, res) => {
   const users = await prisma.user.findMany({
     select: {
@@ -63,7 +63,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   return successResponse(res, users, "Users retrieved successfully");
 });
 
-// ✨ NEW: Update a user's account status (e.g., suspend them)
+// NEW: Update a user's account status (e.g., suspend them)
 export const updateUserStatus = asyncHandler(async (req, res) => {
   const userId = parseInt(req.params.userId, 10);
   const { status } = req.body; // Expects "ACTIVE", "SUSPENDED", "DELETED"
@@ -82,7 +82,7 @@ export const updateUserStatus = asyncHandler(async (req, res) => {
 
 // --- Seller Management by Admin ---
 
-// ✨ NEW: Get all sellers for review
+// NEW: Get all sellers for review
 export const getAllSellers = asyncHandler(async (req, res) => {
   const sellers = await prisma.seller.findMany({
     select: {
@@ -97,7 +97,7 @@ export const getAllSellers = asyncHandler(async (req, res) => {
   return successResponse(res, sellers, "Sellers retrieved successfully");
 });
 
-// ✨ NEW: Update a seller's KYC status after verification
+// NEW: Update a seller's KYC status after verification
 export const updateSellerKycStatus = asyncHandler(async (req, res) => {
   const sellerId = parseInt(req.params.sellerId, 10);
   const { kycStatus } = req.body; // Expects "VERIFIED", "REJECTED"
@@ -114,7 +114,7 @@ export const updateSellerKycStatus = asyncHandler(async (req, res) => {
   return successResponse(res, updatedSeller, "Seller KYC status updated");
 });
 
-// ✨ NEW: Update a user's KYC status after verification
+// NEW: Update a user's KYC status after verification
 export const updateUserKycStatus = asyncHandler(async (req, res) => {
   const userId = parseInt(req.params.userId, 10);
   const { kycStatus } = req.body; // Expects "VERIFIED", "REJECTED"
@@ -130,10 +130,6 @@ export const updateUserKycStatus = asyncHandler(async (req, res) => {
   });
   return successResponse(res, updatedUser, "User KYC status updated");
 });
-
-// Add these two new functions to your adminController.js file
-
-// ... other functions like getAllUsers, etc.
 
 /**
  * @desc    Get a single user's details for an admin
@@ -190,8 +186,6 @@ export const getSellerByIdForAdmin = asyncHandler(async (req, res) => {
   }
   return successResponse(res, seller, "Seller details retrieved");
 });
-
-// Add this new function to your adminController.js file
 
 /**
  * @desc    Get all admin accounts

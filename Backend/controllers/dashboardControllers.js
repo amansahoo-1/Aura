@@ -117,7 +117,7 @@ export const getPlatformAnalytics = asyncHandler(async (req, res) => {
 });
 
 /**
- * ✨ NEW: Get dashboard metrics for a specific seller
+ * NEW: Get dashboard metrics for a specific seller
  * @route   GET /api/dashboard/seller/metrics
  * @access  Private/Seller
  */
@@ -182,7 +182,7 @@ export const exportData = asyncHandler(async (req, res) => {
     case "items":
       data = await prisma.item.findMany({ include: { product: true } });
       break;
-    // ✨ NEW: Added seller and payout exports
+    // NEW: Added seller and payout exports
     case "sellers":
       data = await prisma.seller.findMany({
         include: { products: true, payouts: true },

@@ -24,18 +24,6 @@ import { authenticate, checkRole } from "../middleware/authMiddleware.js"; // As
 
 const sellerRouter = express.Router();
 
-// // --- Public Seller Authentication Routes ---
-// sellerRouter.post(
-//   "/register",
-//   validateRequest({ body: sellerRegisterSchema }),
-//   asyncHandler(registerSeller)
-// );
-// sellerRouter.post(
-//   "/login",
-//   validateRequest({ body: sellerLoginSchema }),
-//   asyncHandler(loginSeller)
-// );
-
 // --- Protected Routes (All routes below require a seller to be logged in) ---
 // Note: You would create a role check for 'SELLER' in your authMiddleware
 sellerRouter.use(authenticate /*, checkRole('SELLER')*/);

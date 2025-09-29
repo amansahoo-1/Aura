@@ -34,7 +34,7 @@ rentalRouter.use(authenticate, requireAuth(), checkAccountStatus);
 // --- User-Facing Routes ---
 const userOnly = checkRole(["USER"]);
 
-// ✅ FIX: Step 1 - User initiates a rental checkout
+// Step 1 - User initiates a rental checkout
 rentalRouter.post(
   "/initiate",
   userOnly,
@@ -42,7 +42,7 @@ rentalRouter.post(
   asyncHandler(initiateRental)
 );
 
-// ✅ FIX: Step 2 - User confirms the rental after payment
+// Step 2 - User confirms the rental after payment
 rentalRouter.post(
   "/:rentalId/confirm-payment",
   userOnly,
@@ -56,7 +56,7 @@ rentalRouter.post(
 // --- Admin & Operations Routes ---
 const adminAndOpsRoles = [Role.ADMIN, Role.SUPERADMIN, Role.OPERATIONS];
 
-// ✅ FIX: Admin updates the status of a rental
+// Admin updates the status of a rental
 rentalRouter.patch(
   "/:rentalId/status",
   checkRole(adminAndOpsRoles),
@@ -67,7 +67,7 @@ rentalRouter.patch(
   asyncHandler(updateRentalStatus)
 );
 
-// ✨ NEW: Admin updates logistics info for a rental
+// Admin updates logistics info for a rental
 rentalRouter.patch(
   "/:rentalId/logistics",
   checkRole(adminAndOpsRoles),

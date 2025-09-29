@@ -14,7 +14,6 @@ import {
 } from "../validations/product.validation.js";
 import { validateRequest } from "../middleware/validation.middleware.js";
 // Note: No authentication middleware is needed here as these are public routes.
-// ✨ NEW: Import review controllers and validation
 import {
   createReview,
   getReviewsForProduct,

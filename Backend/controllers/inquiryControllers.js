@@ -28,7 +28,7 @@ const inquirySelectFields = {
   },
 };
 
-// ✅ Create Inquiry (Public)
+// Create Inquiry (Public)
 export const createInquiry = asyncHandler(async (req, res) => {
   const validatedData = inquiryCreateSchema.parse(req.body);
 
@@ -40,7 +40,7 @@ export const createInquiry = asyncHandler(async (req, res) => {
   return successResponse(res, inquiry, "Inquiry submitted successfully", 201);
 });
 
-// ✅ Get All Inquiries (Admin only)
+// Get All Inquiries (Admin only)
 export const getInquiries = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10, status } = paginationSchema.parse(req.query);
   const skip = (page - 1) * limit;
@@ -73,7 +73,7 @@ export const getInquiries = asyncHandler(async (req, res) => {
   );
 });
 
-// ✅ Get Inquiry by ID (Admin only)
+// Get Inquiry by ID (Admin only)
 export const getInquiryById = asyncHandler(async (req, res) => {
   const { id } = inquiryIdParamSchema.parse(req.params);
 
@@ -89,7 +89,7 @@ export const getInquiryById = asyncHandler(async (req, res) => {
   return successResponse(res, inquiry, "Inquiry details fetched");
 });
 
-// ✅ Assign Inquiry to Admin
+// Assign Inquiry to Admin
 export const assignInquiry = asyncHandler(async (req, res) => {
   const { id } = inquiryIdParamSchema.parse(req.params);
   const { adminId } = req.body;
@@ -127,7 +127,7 @@ export const assignInquiry = asyncHandler(async (req, res) => {
   return successResponse(res, updatedInquiry, "Inquiry assigned successfully");
 });
 
-// ✅ Update Inquiry Status (Admin only)
+// Update Inquiry Status (Admin only)
 export const updateInquiryStatus = asyncHandler(async (req, res) => {
   const { id } = inquiryIdParamSchema.parse(req.params);
   const { status } = inquiryUpdateSchema.parse(req.body);
@@ -158,7 +158,7 @@ export const updateInquiryStatus = asyncHandler(async (req, res) => {
   return successResponse(res, updatedInquiry, "Inquiry status updated");
 });
 
-// ✅ Add Response to Inquiry (Admin only)
+// Add Response to Inquiry (Admin only)
 export const addInquiryResponse = asyncHandler(async (req, res) => {
   const { id } = inquiryIdParamSchema.parse(req.params);
   const { response } = req.body;
@@ -210,7 +210,7 @@ export const addInquiryResponse = asyncHandler(async (req, res) => {
   );
 });
 
-// ✅ Get Inquiry Responses
+// Get Inquiry Responses
 export const getInquiryResponses = asyncHandler(async (req, res) => {
   const { id } = inquiryIdParamSchema.parse(req.params);
 
@@ -234,7 +234,7 @@ export const getInquiryResponses = asyncHandler(async (req, res) => {
   return successResponse(res, responses, "Inquiry responses fetched");
 });
 
-// ✅ Delete Inquiry (Admin only)
+// Delete Inquiry (Admin only)
 export const deleteInquiry = asyncHandler(async (req, res) => {
   const { id } = inquiryIdParamSchema.parse(req.params);
 

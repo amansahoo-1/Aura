@@ -8,7 +8,7 @@ import {
 } from "../middleware/errorMiddleware.js";
 import { RentalStatus, ItemStatus } from "@prisma/client/index.js";
 
-// ✨ NEW: Initiates the checkout process, reserves items, and creates a pending rental.
+// NEW: Initiates the checkout process, reserves items, and creates a pending rental.
 export const initiateRental = asyncHandler(async (req, res) => {
   const { productIds, addressId } = req.body;
   const userId = req.user.id;
@@ -64,7 +64,7 @@ export const initiateRental = asyncHandler(async (req, res) => {
   );
 });
 
-// ✨ NEW: Confirms the rental after successful payment.
+//  NEW: Confirms the rental after successful payment.
 export const confirmRentalPayment = asyncHandler(async (req, res) => {
   const rentalId = parseInt(req.params.rentalId, 10);
   const userId = req.user.id;
@@ -111,7 +111,7 @@ export const confirmRentalPayment = asyncHandler(async (req, res) => {
   );
 });
 
-// ✅ REFACTORED: Smartly updates both Rental and associated Item statuses.
+// REFACTORED: Smartly updates both Rental and associated Item statuses.
 export const updateRentalStatus = asyncHandler(async (req, res) => {
   const rentalId = parseInt(req.params.rentalId, 10);
   const { status } = req.body;
@@ -157,7 +157,7 @@ export const updateRentalStatus = asyncHandler(async (req, res) => {
   );
 });
 
-// ✨ NEW: Endpoint for admins to add logistics information.
+//  NEW: Endpoint for admins to add logistics information.
 export const updateRentalLogistics = asyncHandler(async (req, res) => {
   const rentalId = parseInt(req.params.rentalId, 10);
   const logisticsData = req.body;
@@ -184,7 +184,7 @@ async function findAvailableItemsForProducts(prisma, productIds) {
   return items;
 }
 
-// ✅ REFACTORED: Calculates all fee components based on the new schema.
+// Calculates all fee components based on the new schema.
 async function calculateRentalFees(items) {
   const fees = {
     rentalFee: items.reduce(

@@ -1,11 +1,11 @@
 import { ZodError } from "zod";
 
-// 🚀 Store all validated results here instead of mutating req.query, req.params, etc.
+//  Store all validated results here instead of mutating req.query, req.params, etc.
 export const validateRequest = (schemas) => {
   return (req, res, next) => {
     try {
-      req.validated ??= {}; // ✅ Preserve previous validations
-      // ⬅️ centralized place to store all validated data
+      req.validated ??= {}; // Preserve previous validations
+      // centralized place to store all validated data
 
       if (schemas.params) {
         req.validated.params = {

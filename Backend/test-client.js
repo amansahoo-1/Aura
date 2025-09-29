@@ -11,9 +11,9 @@ async function checkClient() {
 
   // Let's also check if prisma.seller is specifically undefined
   if (prisma.seller === undefined) {
-    console.error("\n❌ CRITICAL: prisma.seller is undefined.");
+    console.error("\nCRITICAL: prisma.seller is undefined.");
   } else {
-    console.log("\n✅ SUCCESS: prisma.seller is defined.");
+    console.log("\nSUCCESS: prisma.seller is defined.");
   }
 
   await prisma.$disconnect();
