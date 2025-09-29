@@ -93,23 +93,27 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Checkout</h1>
+      <h1 className="text-3xl text-black font-bold mb-6">Checkout</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 bg-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-bold mb-4">Select Shipping Address</h2>
-          <div className="space-y-4">
+          <h2 className="text-xl font-bold mb-4 text-black">
+            Select Shipping Address
+          </h2>
+          <div className="space-y-4 text-black">
             {addresses.map((address) => (
               <div
                 key={address.id}
                 onClick={() => setSelectedAddressId(address.id)}
-                className={`p-4 border rounded-lg cursor-pointer ${
+                className={`p-4 border rounded-lg cursor-pointer text-black ${
                   selectedAddressId === address.id
                     ? "border-purple-600 ring-2 ring-purple-200"
                     : "border-gray-300"
                 }`}
               >
-                <p className="font-semibold">{address.addressLine}</p>
-                <p>
+                <p className="font-semibold text-black">
+                  {address.addressLine}
+                </p>
+                <p className="text-sm text-gray-600">
                   {address.city}, {address.state} - {address.postalCode}
                 </p>
               </div>
@@ -118,19 +122,25 @@ export default function CheckoutPage() {
         </div>
 
         <div className="bg-gray-50 p-6 rounded-lg self-start">
-          <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+          <h2 className="text-xl font-bold mb-4 text-black">Order Summary</h2>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span>₹{cart.meta.subtotal.toLocaleString("en-IN")}</span>
+              <span className="text-black">Subtotal</span>
+              <span className="text-black">
+                ₹{cart.meta.subtotal.toLocaleString("en-IN")}
+              </span>
             </div>
             <div className="flex justify-between">
-              <span>Tax</span>
-              <span>₹{cart.meta.tax.toLocaleString("en-IN")}</span>
+              <span className="text-black">Tax</span>
+              <span className="text-black">
+                ₹{cart.meta.tax.toLocaleString("en-IN")}
+              </span>
             </div>
             <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
-              <span>Total</span>
-              <span>₹{cart.meta.total.toLocaleString("en-IN")}</span>
+              <span className="text-black">Total</span>
+              <span className="text-black">
+                ₹{cart.meta.total.toLocaleString("en-IN")}
+              </span>
             </div>
           </div>
           {error && <p className="text-red-500 text-sm mt-4">{error}</p>}

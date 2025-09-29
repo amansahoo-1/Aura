@@ -22,6 +22,7 @@ import cartRouter from "./routes/cartRoutes.js";
 import wishlistRouter from "./routes/wishlistRoutes.js";
 import dashboardRouter from "./routes/dashboardRoutes.js";
 import kycRouter from "./routes/kycRouter.js";
+import uploadRouter from "./routes/uploadRouter.js";
 
 // Config initialization
 const __filename = fileURLToPath(import.meta.url);
@@ -69,6 +70,7 @@ app.use("/api/cart", cartRouter);
 app.use("/api/wishlist", wishlistRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/kyc", kycRouter);
+app.use("/api/upload", uploadRouter);
 
 // --- Error Handling Middleware (must be last) ---
 app.use(notFoundHandler);
